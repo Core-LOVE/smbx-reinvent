@@ -20,7 +20,7 @@ do
 	end
 
 	types['STARTPOINT'] = function(settings)
-		local v = Player.spawn(1, settings.X, settings.Y)
+		local v = Player.spawn('mario', settings.X, settings.Y)
 		
 		v.direction = settings.D
 	end
@@ -38,9 +38,24 @@ do
 		v.dontMove = settings.NM or false
 	end
 	
-	-- types['BGO'] = function(settings)
-		-- local v = BGO.spawn(settings.ID, settings.X, settings.Y)
-	-- end
+	types['DOORS'] = function(settings)
+		local id = settings.DT
+		
+		local ext = Warp.spawn(id, settings.OX, settings.OY)
+		ext.direction = settings.OD
+		
+		local ent = Warp.spawn(id, settings.IX, settings.IY)
+		ent.exit = ext
+		ent.direction = settings.ID
+		
+		if settings.TW then
+			ext.exit = ent
+		end
+	end
+	
+	types['BGO'] = function(settings)
+		local v = BGO.spawn(settings.ID, settings.X, settings.Y)
+	end
 	
 	LevelParser.formats['.lvlx'] = function(path)
 		local type

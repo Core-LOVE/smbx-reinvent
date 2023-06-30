@@ -9,6 +9,10 @@ function Camera.spawn(x, y, width, height)
 	return self
 end
 
+function Camera:tween(t, ...)
+	return Timer.tween(t, self, ...)
+end
+
 function Camera:setSize(w, h)
 	local w = w or self.width
 	local h = h or self.height
@@ -37,6 +41,7 @@ function Camera:initialize(x, y, width, height, settings)
 	self.canvas = love.graphics.newCanvas(self.width, self.height, self.settings)
 	
 	self.follow_target = true
+	self.limit_to_section = true
 	
 	self.render_x = 0
 	self.render_y = 0
@@ -53,14 +58,16 @@ function Camera:getTarget()
 end
 
 function Camera:update_target()
-	if not self.follow_target then return end
-	
 	local target = self:getTarget()
 	
 	if target == nil then return end
 	
-	self.x = (target.x - (self.width * 0.5)) + (target.width * 0.5)
-	self.y = (target.y - (self.height * 0.5)) + (target.height * 0.5)
+	if self.follow_target then
+		self.x = (target.x - (self.width * 0.5)) + (target.width * 0.5)
+		self.y = (target.y - (self.height * 0.5)) + (target.height * 0.5)
+	end
+	
+	if not self.limit_to_section then return end
 	
 	local s = target.section
 

@@ -15,7 +15,7 @@ Player.settings = setmetatable({}, {
 			
 			local characterPath = (character .. '-' .. powerup .. '.ini')
 			
-			local path = File.resolve(characterPath) or File.resolve('character/' .. character .. '/' .. characterPath)
+			local path = Files.resolve(characterPath) or Files.resolve('config/character/' .. character .. '/' .. characterPath)
 			local data = iniParser.read(path)
 			
 			for k,v in pairs(data.common) do
@@ -26,7 +26,7 @@ Player.settings = setmetatable({}, {
 				local n = (y == nil and 'X') or 'Y'
 				local offset = 'offset' .. n
 				
-				settiings['getSpriteOffset' .. n] = function(self, indexX, indexY)
+				settings['getSpriteOffset' .. n] = function(settiings, indexX, indexY)
 					local frame = data['frame-' .. indexX .. '-' .. indexY]
 					
 					if not frame then return 0 end
@@ -34,7 +34,7 @@ Player.settings = setmetatable({}, {
 					return data['frame-' .. indexX .. '-' .. indexY][offset]
 				end
 				
-				settiings['setSpriteOffset' .. n] = function(self, indexX, indexY, val)
+				settings['setSpriteOffset' .. n] = function(settiings, indexX, indexY, val)
 					data['frame-' .. indexX .. '-' .. indexY][offset] = val
 				end	
 			end
@@ -68,11 +68,18 @@ function Player.spawn(character, x, y)
 	return self
 end
 
+function Player:getSettings()
+	return Player.settings[self.character][self.powerup]
+end
+
 function Player:initialize(character, x, y)
 	self.character = character
+	self.powerup = 1
 	
-	super.initialize(self, x, y, 28, 28)
+	local settings = self:getSettings()
 	
+	super.initialize(self, x, y, settings.width, settings.height)
+
 	self.collider = Collider(self, 'box', x, y, self.width, self.height)
 	self.collider.callback = function(thing, other, x, y, xgoal, ygoal, normalx, normaly)
 		if normalx > 0 then self.collidesBlockLeft = true elseif normalx < 0 then self.collidesBlockRight = true end
@@ -129,7 +136,7 @@ function Player:initialize(character, x, y)
 		elseif realOther.type == "NPC" then
 			local didCollide, t, nx, ny, cornerCollide = self.collider:sweep(other.collider:realShape(), self.x + self.speedX, self.y + self.speedY)
 			
-			if didCollide and ny < 0 and self.y < realOther.y and self.speedY > 0 then
+			if didCollide and ny < 0 and (self.y + self.height) - 1 < realOther.y and self.speedY > 0 then
 				return 'slide'
 			end
 			
@@ -143,9 +150,16 @@ function Player:initialize(character, x, y)
 	self.section = 1
 	
 	self.direction = 1
-	self.frame = 0
+	self.slideCounter = 0
 	
-	self.powerup = 1
+	self.holdingNPC = nil
+	
+	self.targetWarp = nil
+	self.warpDelay = 0
+	
+	self.frame = 0
+	self.frameTimer = 0
+	
 	self.jumpForce = 0
 	self.isSpinjumping = false
 	
@@ -156,12 +170,112 @@ function Player:getGravity()
 	return 0.3
 end
 
-function Player:updateCollision()
-	Game:stage().world:update(self.shape, self.x, self.y)
+do 
+	local function animation_onFloor(v, fr, i)
+		if v.speedX ~= 0 then
+			if v.slideCounter <= 0 then
+				v.frameTimer = v.frameTimer + 1
+				if v.speedX > Defines.player_walkspeed - 1.5 or v.speedX < -Defines.player_walkspeed + 1.5 then
+					v.frameTimer = v.frameTimer + 1 end
+				if v.speedX > Defines.player_walkspeed or v.speedX < -Defines.player_walkspeed then
+					v.frameTimer = v.frameTimer + 1 end
+				if v.speedX > Defines.player_walkspeed + 1 or v.speedX < -Defines.player_walkspeed - 1 then
+					v.frameTimer = v.frameTimer + 1 end
+				if v.speedX > Defines.player_walkspeed + 2 or v.speedX < -Defines.player_walkspeed - 2 then
+					v.frameTimer = v.frameTimer + 1 end
+
+				if v.frameTimer >= 10 then
+					v.frameTimer = 0
+					if v.frame == fr.stand[i] then v.frame = fr.run[i] else v.frame = fr.stand[i] end
+				end
+			else
+				v.frame = 4
+			end
+		else
+			v.frame = fr.stand[i] 
+		end
+	end
+
+	local function animation_inAir(v, fr, i)
+		if v.isSpinjumping then
+			local fspeed = 3
+			v.frameTimer = v.frameTimer + 1
+			if v.frameTimer < fspeed then
+				v.direction = 1
+				v.frame = fr.stand[i]
+			elseif v.frameTimer < fspeed * 2 then
+				v.frame = 15
+			elseif v.frameTimer < fspeed * 3 then
+				v.direction = -1
+				v.frame = fr.stand[i]
+			elseif v.frameTimer < fspeed * 4 then
+				v.frame = 13 
+			elseif v.frameTimer >= fspeed * 5 then
+				v.direction = 1
+				v.frame = fr.stand[i]
+				v.frameTimer = 0
+			end
+		else
+			v.frame = fr.jump[i]
+		end
+	end
+
+	function Player:update_animation()
+		local v = self
+		local fr = {
+			stand = {[1] = 1, [2] = 5},
+			run = {[1] = 2, [2] = 6},
+			jump = {[1] = 3, [2] = 6},
+		}
+		
+		local i = 1
+		
+		if v.holdingNPC then
+			i = 2
+		end
+		
+		if not v.targetWarp then
+			if v.collidesBlockBottom then
+				if not v.slidingSlope then
+					animation_onFloor(v, fr, i)
+				else
+					v.frame = 24
+				end
+			else
+				if not v.slidingSlope then
+					animation_inAir(v, fr, i)
+				else
+					v.frame = 24
+				end
+			end
+		else
+			v.frame = 13
+		end
+	end
+end
+
+function Player:update_warp()
+	if self.warpDelay > 0 then
+		self.warpDelay = (self.warpDelay - 1)
+		return
+	end
+	
+	for k, warp in ipairs(Warp) do
+		if warp.exit and CollisionUtils.simple(self, warp) then
+			return warp:onCollide(self)
+		end	
+	end
 end
 
 function Player:update()
 	self.keys:update()
+	self:update_animation()
+	
+	if self.keys.left then
+		self.direction = -1
+	elseif self.keys.right then
+		self.direction = 1
+	end
 	
 	-- WALKING
 	
@@ -239,6 +353,8 @@ function Player:update()
 	
 	self.speedY = math.min(self.speedY + Defines.player_grav, Defines.gravity)
 	
+	self:update_warp()
+	
 	self:clearCollides()
 
 	local xto, yto = self.collider:move()
@@ -310,15 +426,18 @@ do
 	end
 	
 	function Player:render()
-		-- local texture = Assets.graphics[self.character][self.powerup]
+		local texture = Assets.graphics[self.character][self.powerup]
+		local settings = self:getSettings()
+	
+		local tx, ty = pfrX(100 + self.frame * self.direction), pfrY(100 + self.frame * self.direction)
+		local quad = love.graphics.newQuad(tx, ty, 100, 100, texture:getDimensions())
 		
-		-- local tx, ty = pfrX(100 + self.frame * self.direction), pfrY(100 + self.frame * self.direction)
-		-- local quad = love.graphics.newQuad(tx, ty, 100, 100, texture:getWidth(), texture:getHeight())
+		local ntx, nty = tx / 100, ty / 100
 		
-		-- Draw.texture(texture, quad, 0, 0)
-		local texture = Assets.graphics.npc[9]
+		local ox = settings:getSpriteOffsetX(ntx, nty)
+		local oy = settings:getSpriteOffsetY(ntx, nty)
 		
-		Draw.texture(texture)
+		Draw.texture(texture, quad, -ox, -oy)
 	end
 end
 

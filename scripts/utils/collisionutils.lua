@@ -108,4 +108,14 @@ function CollisionUtils.slopes(self, other)
 	-- end
 end
 
+function CollisionUtils.simple(a, b)
+   if ((b.x >= a.x + a.width) or
+		   (b.x + b.width <= a.x) or
+		   (b.y >= a.y + a.height) or
+		   (b.y + b.height <= a.y)) then
+			  return false 
+	   else return true
+           end
+end
+
 return CollisionUtils

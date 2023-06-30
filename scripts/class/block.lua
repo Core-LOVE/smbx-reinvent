@@ -91,10 +91,19 @@ function Block:hit(side, culprit, hitcount)
 		end)
 	end)
 	
+	-- Game.paused = true
+	
+	local cam = Camera[1]
+	cam.follow_target = false
+	cam:tween(1, {x = cam.x - 200, y = cam.y + 48}, 'out-cubic', function()
+		cam.follow_target = true
+	end)
+	
 	table.insert(Block.bumped, self)
 end
 
 function Block:remove()
+	super.remove(self)
 	self.collider:remove()
 	
 	for k,v in ipairs(Block) do

@@ -38,6 +38,19 @@ function Object:getPriority()
 	return -65
 end
 
+function Object:remove()
+	local parent = self.parent
+	
+	if parent then
+		for k,v in ipairs(parent.children) do
+			if v == self then
+				table.remove(parent.children, k)
+				break
+			end
+		end
+	end
+end
+
 function Object:drawChildren()
 	if self.children_hidden then return end
 	
@@ -73,9 +86,9 @@ function Object:draw()
 		
 		self:render()
 		
-		if self.type ~= "Block" then 
-			Draw.rectangle('line', 0, 0, self.width, self.height)
-		end
+		-- if self.type ~= "Block" then 
+			-- Draw.rectangle('line', 0, 0, self.width, self.height)
+		-- end
 		
 		self:drawChildren()
 		

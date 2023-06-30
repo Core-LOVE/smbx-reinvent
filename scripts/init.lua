@@ -24,10 +24,13 @@ Game = require("game")
 
 Section = require("class.section")
 NPC = require("class.npc")
+BGO = require("class.bgo")
 Block = require("class.block")
 Player = require("class.player")
 Camera = require("class.camera")
 Effect = require("class.effect")
+Warp = require("class.warp")
+Zone = require("class.zone")
 Tile = require("class.map.tile")
 
 -- BoxCollider = require("class.collider.boxcollider")
@@ -36,17 +39,22 @@ function love.draw()
 	Signal.emit('onDraw')
 end
 
-Timer.script(function(wait)
-	while true do
-		Signal.emit('onUpdate', Game.speed)
-		Signal.emit('onKeyUpdate')
-		
-		wait(Game.speed)
-	end
-end)
+local accum = 0
+-- local step = 0.016 -- fixed time step
 
 function love.update(dt)
-	Timer.update(Game.speed)
+	accum = accum + dt
+	
+	while accum >= Game.dt do
+		Timer.update(Game.dt)
+		
+		if not Game.paused then
+			Signal.emit('onUpdate', Game.dt)
+		end
+		
+		Signal.emit('onKeyUpdate')
+		accum = accum - Game.dt
+	end
 end
 
 function love.lowmemory()

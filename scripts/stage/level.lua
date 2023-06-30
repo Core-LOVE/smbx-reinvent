@@ -15,8 +15,8 @@ function Level:initialize(path)
 	
 	-- self.camera2 = Camera.spawn(400, 0)
 	
-	self.isTitle = true
-	self.world = splash.new(32)
+	self.isTitle = false
+	self.world = splash.new()
 end
 
 function Level:update(dt)
@@ -82,6 +82,10 @@ function Level:render(camera)
 	Draw.clear()
 	
 	Draw.translate(-camera.x, -camera.y)
+	
+	for _,obj in ipairs(BGO) do
+		obj:draw()
+	end
 	
 	for _,obj in ipairs(NPC) do
 		obj:draw()

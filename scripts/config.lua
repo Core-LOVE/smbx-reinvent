@@ -7,7 +7,6 @@ local iniParser = require("utils.parser.ini")
 function Config:initialize(name, id, args)
 	for k,v in pairs(args) do
 		self[k] = v
-		print(k .. ')', self[k])
 	end
 	
 	local path = (name .. '-' .. id .. '.txt')

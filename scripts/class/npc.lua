@@ -87,6 +87,7 @@ function NPC:initialize(id, x, y)
 end
 
 function NPC:remove()
+	super.remove(self)
 	self.collider:remove()
 	
 	for k,v in ipairs(NPC) do
@@ -208,9 +209,14 @@ function NPC:animation()
 	end
 end
 
+function NPC:onUpdate() end
+
 function NPC:update()
-	self:clearCollides()
 	self:animation()
+		
+	self:onUpdate()
+	
+	self:clearCollides()
 	-- self.collider:update()
 	
 	self.speedY = self.speedY + self:getGravity()

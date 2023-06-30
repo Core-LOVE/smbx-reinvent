@@ -1,4 +1,7 @@
-love.filesystem.mount(love.filesystem.getSourceBaseDirectory(), "/", true)
+if love.filesystem.isFused() then
+    love.filesystem.mount(love.filesystem.getSourceBaseDirectory(), "")
+end
+
 love.filesystem.setRequirePath("?.lua;?/init.lua;scripts/?.lua;scripts/?/init.lua")
 require("scripts")
 

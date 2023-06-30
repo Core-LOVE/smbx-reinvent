@@ -6,11 +6,12 @@ local mounts
 local LevelParser = require("utils.parser.level")
 
 Game.fps = 64.102564102564
-Game.speed = (Game.fps / 60)
+-- Game.speed = 1
+Game.dt = (1 / Game.fps)
 
 function Game:setFPS(val)
 	Game.fps = val
-	Game.speed = (Game.fps / 60)
+	Game.dt = (1 / Game.fps)
 end
 
 function Game:init(worldPath, levelPath)
@@ -42,6 +43,7 @@ function Game:init(worldPath, levelPath)
 	self.level = Level:new(levelPath)
 	-- self.map = Map:new(levelPath:match("(.*[/\\])") .. ')
 	
+	self.paused = false
 	self.isMap = false
 	
 	for k,camera in ipairs(Camera) do
