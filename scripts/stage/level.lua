@@ -22,6 +22,10 @@ end
 function Level:update(dt)
 	Block.animation.update()
 	
+	for _,obj in ipairs(Effect) do
+		obj:update()
+	end
+	
 	for _,obj in ipairs(NPC) do
 		obj:update()
 	end
@@ -96,6 +100,10 @@ function Level:render(camera)
 	end
 	
 	for _,obj in ipairs(Player) do
+		obj:draw()
+	end
+	
+	for _,obj in ipairs(Effect) do
 		obj:draw()
 	end
 	

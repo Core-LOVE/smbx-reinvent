@@ -81,6 +81,10 @@ HIT_LEFT = -1
 HIT_RIGHT = 1
 
 function Block:hit(side, culprit, hitcount)
+	if true then
+		return self:remove(true)
+	end
+	
 	local side = side or HIT_DOWN
 	
 	Timer.tween(0.1, self, {offset_y = -16}, nil, function()
@@ -91,18 +95,10 @@ function Block:hit(side, culprit, hitcount)
 		end)
 	end)
 	
-	-- Game.paused = true
-	
-	local cam = Camera[1]
-	cam.follow_target = false
-	cam:tween(1, {x = cam.x - 200, y = cam.y + 48}, 'out-cubic', function()
-		cam.follow_target = true
-	end)
-	
 	table.insert(Block.bumped, self)
 end
 
-function Block:remove()
+function Block:remove(fx)
 	super.remove(self)
 	self.collider:remove()
 	
@@ -110,6 +106,11 @@ function Block:remove()
 		if v == self then
 			return table.remove(Block, k)
 		end
+	end
+	
+	if fx then
+		Play.sound(4)
+		Effect.spawn(1, self.x, self.y)
 	end
 end
 

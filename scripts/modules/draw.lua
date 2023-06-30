@@ -157,6 +157,8 @@ Draw.rawScale = lg.scale
 
 Draw.clear = lg.clear
 
+Draw.newQuad = lg.newQuad
+
 function Draw.setZ(val)
 	z = val
 end

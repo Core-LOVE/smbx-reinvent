@@ -39,6 +39,10 @@ function Object:getPriority()
 end
 
 function Object:remove()
+	for k,v in ipairs(self.children) do
+		v:remove()
+	end
+	
 	local parent = self.parent
 	
 	if parent then
@@ -49,6 +53,11 @@ function Object:remove()
 			end
 		end
 	end
+end
+
+function Object:addChildren(child)
+	child.parent = self
+	return table.insert(self.children, child)
 end
 
 function Object:drawChildren()

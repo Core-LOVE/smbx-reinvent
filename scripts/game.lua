@@ -4,7 +4,8 @@ local urfs = require("utils.urfs")
 local mounts
 
 local LevelParser = require("utils.parser.level")
-
+local MapParser = require("utils.parser.world")
+		
 Game.fps = 64.102564102564
 -- Game.speed = 1
 Game.dt = (1 / Game.fps)
@@ -32,26 +33,38 @@ function Game:init(worldPath, levelPath)
 		end
 	end
 	
+	local worldFile
+	
 	for k, file in ipairs(Files.iterate("")) do
 		if file:find(".wldx") then
-			self.map = Map:new(file)
+			worldFile = file
 			break
 		end
 	end
 	
 	-- print(levelPath:match("(.*[/\\])"), levelPath:match("(.+)%..+$"))
-	self.level = Level:new(levelPath)
+	-- self.level = Level:new(levelPath)
 	-- self.map = Map:new(levelPath:match("(.*[/\\])") .. ')
 	
 	self.paused = false
-	self.isMap = false
 	
-	for k,camera in ipairs(Camera) do
-		camera:defaultRender()
+	if levelPath then
+		self.level = Level:new(levelPath)
+		self.isMap = false
+	else
+		self.isMap = true
 	end
 	
 	if not self.isMap then
 		LevelParser.read(levelPath)
+	else
+		self.map = Map:new()
+		
+		MapParser.read(worldFile)
+	end
+	
+	for k,camera in ipairs(Camera) do
+		camera:defaultRender()
 	end
 end
 

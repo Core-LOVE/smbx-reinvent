@@ -43,7 +43,7 @@ do
 		-- local v = BGO.spawn(settings.ID, settings.X, settings.Y)
 	-- end
 	
-	WorldParser.formats['.lvlx'] = function(path)
+	WorldParser.formats['.wldx'] = function(path)
 		local type
 		
 		for line in Files.lines(path) do
@@ -81,6 +81,8 @@ end
 function WorldParser.read(path)
 	for format, f in pairs(WorldParser.formats) do
 		if path:find(format) then
+			print(path)
+			
 			return f(path)
 		end
 	end

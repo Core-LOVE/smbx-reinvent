@@ -115,6 +115,9 @@ end
 
 function NPC:render()
 	local texture = Assets.graphics.npc[self.id]
+	
+	if texture == nil then return end
+	
 	local cfg = NPC.config[self.id]
 	
 	local quad = love.graphics.newQuad(0, cfg.gfxheight * self.frame, cfg.gfxwidth, cfg.gfxheight, texture:getDimensions())

@@ -1,14 +1,12 @@
 local Map = Class('Map')
 
-local MapParser = require("utils.parser.world")
+-- local MapParser = require("utils.parser.world")
 
 function Map:initialize(path)
 	local camera = Camera.spawn(0, 0, 800, 600)
 	-- camera:defaultRender()
 	
 	self.camera = camera
-	
-	MapParser.read(path)
 end
 
 function Map:update()
@@ -17,14 +15,10 @@ function Map:update()
 	end
 end
 
-local img = Assets.graphics.ui["Interface4"]
-
 function Map:draw()
 	for _, obj in ipairs(Camera) do
 		obj:draw()
 	end
-	
-	Draw.texture(img)
 end
 
 function Map:render()

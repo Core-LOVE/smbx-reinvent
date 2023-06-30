@@ -5,10 +5,13 @@ end
 love.filesystem.setRequirePath("?.lua;?/init.lua;scripts/?.lua;scripts/?/init.lua")
 require("scripts")
 
-local urfs = require "utils.urfs"
-urfs.mount("D:/Engines/SMBX2/data")
+-- local urfs = require "utils.urfs"
+-- urfs.mount("D:/Engines/SMBX2/data")
 
-Game:init("D:/Engines/SMBX2/worlds/the invasion 2", "TEST.lvlx")
+-- Game:init("D:/Engines/SMBX2/worlds/the invasion 2", "TEST.lvlx")
+local realDir = love.filesystem.getRealDirectory('worlds')
+
+Game:init(realDir .. "/worlds/the invasion 2", "TEST.lvlx")
 
 -- Tile.spawn(1, 0, 0)
 -- Player.spawn('mario', 0, 0)

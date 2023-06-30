@@ -444,7 +444,7 @@ local function map_shape_helper(cx, cy, self, seen, f, shape)
     local shapes = self.shapes
     for i = 1, #list do
         local thing = list[i]
-        if not seen[thing] then
+        if not seen[thing] and shapes[thing] then
             local c, t = shape_intersect(shape, shapes[thing])
             if c then
                 f(thing, t)
@@ -746,7 +746,7 @@ local function ray_trace_helper(cx, cy, self, seg, ref, filter)
     for i = 1, #list do
         local thing = list[i]
         -- Segment intersections should always return a time of intersection
-        if not filter or filter(thing) then
+        if not filter or filter(thing) and shapes[thing] then
             local c, t1 = shape_intersect(seg, shapes[thing])
             if c and t1 <= ref[2] then
                 ref[1], ref[2] = thing, t1

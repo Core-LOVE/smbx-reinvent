@@ -267,6 +267,26 @@ function Player:update_warp()
 	end
 end
 
+function Player:limit_position()
+	local s = Section[s]
+	
+	if not s then return end
+	
+	if self.x < s.x then
+		self.x = s.x
+	elseif self.x + self.width > s.x + s.width then
+		self.x = (s.x + s.width) - self.width
+	end
+	
+	if self.y + self.height > s.y + s.height + 64 then
+		-- self.y = (s.y + s.height) - self.height
+	end
+	
+	if self.y < s.y then
+		self.y = s.y
+	end
+end
+
 function Player:update()
 	self.keys:update()
 	self:update_animation()
@@ -313,6 +333,8 @@ function Player:update()
 		end
 	end
 	
+	if self.isSpinjumping and self.collidesBlockBottom then self.isSpinjumping = false end
+		
 	-- JUMPING
 	
 	if self.keys.jump or self.keys.altJump then
@@ -354,7 +376,7 @@ function Player:update()
 	self.speedY = math.min(self.speedY + Defines.player_grav, Defines.gravity)
 	
 	self:update_warp()
-	
+	self:limit_position()
 	self:clearCollides()
 
 	local xto, yto = self.collider:move()

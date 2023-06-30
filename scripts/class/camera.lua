@@ -77,7 +77,7 @@ function Camera:update_target()
 		if self.x < s.x then
 			self.x = s.x
 		elseif self.x + self.width > s.x + s.width then
-			self.x = (s.x + self.width) - self.width
+			self.x = (s.x + s.width) - self.width
 		end
 		
 		if self.y + self.height > s.y + s.height then
