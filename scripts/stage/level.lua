@@ -4,15 +4,15 @@ local splash = require("utils.splash")
 
 function Level:initialize(path)
 	local camera = Camera.spawn(0, 0)
-	camera.width = 400
+	-- camera.width = 400
 	
-	local camera2 = Camera.spawn(400, 0)
-	camera2.idx = 1
-	camera2.render_x = 400
-	camera2.width = 400
+	-- local camera2 = Camera.spawn(400, 0)
+	-- camera2.idx = 1
+	-- camera2.render_x = 400
+	-- camera2.width = 400
 	
-	self.camera = camera
-	self.camera2 = camera2
+	-- self.camera = camera
+	-- self.camera2 = camera2
 	
 	self.isTitle = false
 	self.world = splash.new()
@@ -85,23 +85,23 @@ function Level:render(camera)
 	end
 	
 	for _,obj in ipairs(BGO) do
-		obj:draw()
+		obj:draw(camera)
 	end
 	
 	for _,obj in ipairs(NPC) do
-		obj:draw()
+		obj:draw(camera)
 	end
 	
 	for _,obj in ipairs(Block) do
-		obj:draw()
+		obj:draw(camera)
 	end
 	
 	for _,obj in ipairs(Player) do
-		obj:draw()
+		obj:draw(camera)
 	end
 	
 	for _,obj in ipairs(Effect) do
-		obj:draw()
+		obj:draw(camera)
 	end
 	
 	Draw.update()

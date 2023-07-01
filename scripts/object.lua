@@ -10,7 +10,7 @@ function Object:initialize(x, y, width, height)
 	self.speedY = 0
 	self.width = width or 0
 	self.height = height or 0
-	
+
 	self.scale_x = 1
 	self.scale_y = 1
 	self.rotation = 0
@@ -80,8 +80,8 @@ function Object:getZ()
 	return 0
 end
 
-function Object:draw() 
-	if self.isHidden then return end
+function Object:draw(cam) 
+	if (self.isHidden) then return end
 	
 	Draw.push()
 		
@@ -93,7 +93,7 @@ function Object:draw()
 		local oldZ = Draw.getZ()
 		Draw.setZ(self:getZ())
 		
-		self:render()
+		self:render(cam)
 		
 		-- if self.type ~= "Block" then 
 			-- Draw.rectangle('line', 0, 0, self.width, self.height)

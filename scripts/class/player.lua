@@ -110,7 +110,7 @@ function Player:initialize(character, x, y)
 			
 			local hit = true
 			
-			if cfg.semisolid then
+			if cfg.semisolid or cfg.sizable then
 				hit = false
 				
 				local didCollide, t, nx, ny, cornerCollide = self.collider:sweep(other.collider:realShape(), self.x + self.speedX, self.y + self.speedY)

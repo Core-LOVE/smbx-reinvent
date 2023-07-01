@@ -1,5 +1,7 @@
 local Camera, super = Class('Camera', Object)
 
+local CollisionUtils = require("utils.collisionutils")
+
 function Camera.spawn(x, y, width, height)
 	local self = Camera:new(x, y)
 	
@@ -137,6 +139,10 @@ function Camera:draw()
 		self:drawChildren()
 	
 	Draw.rawPop()
+end
+
+function Camera:collidesWith(obj)
+	return CollisionUtils.simple(self, obj)
 end
 
 return Camera 

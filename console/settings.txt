@@ -1,8 +1,8 @@
-scroll_output_on_exec true
 color_err #EA2A2AFF
 selected_color #ababab7f
 color_com #00CC00FF
 cursor_block_color #ffffff7f
+scroll_output_on_exec true
 cursor_line_color #ffffffff
 cursor_style block
 cursor_blink_duration 0.5

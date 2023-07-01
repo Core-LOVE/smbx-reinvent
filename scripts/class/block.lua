@@ -14,6 +14,7 @@ Block.static.config = Config.register("block", {
 	floorslope = 0,
 	ceilingslope = 0,
 	semisolid = false,
+	sizable = false,
 	
 	pswitch = false,
 	
@@ -66,6 +67,14 @@ end
 
 function Block:defaultCollider()
 	return Collider(self, 'box', self.x, self.y, self.width, self.height)
+end
+
+function Block:setSize(w, h)
+	self.width = w
+	self.height = h
+	
+	self.collider:remove()
+	self.collider = self:defaultCollider()
 end
 
 function Block:initialize(id, x, y)
@@ -124,8 +133,52 @@ function Block:getZ()
 	return LAYERS.BLOCK
 end
 
-function Block:render()
+function Block:render_sizable(cam)
+	local texture = Assets.graphics.block[self.id]
+	local bHeight = self.height / 32
+	
+	for B = 0, bHeight do
+		local bWidth = self.width / 32
+		
+		for C = 0, bWidth do
+			local pos = {
+				x = C * 32,
+				y = B * 32,
+			}
+			
+			if cam:collidesWith(pos) then
+				local D = C
+				local E = B
+				
+				if D ~= 0 then
+					if math.floor(D) == bWidth - 1 then
+						D = 2
+					else
+						D = 1
+					end
+				end
+				
+				if E ~= 0 then
+					if math.floor(E) == bHeight - 1 then
+						E = 2
+					else
+						E = 1
+					end
+				end
+				
+				local quad = love.graphics.newQuad(D * 32, E * 32, 32, 32, texture:getDimensions())
+				
+				Draw.texture(texture, quad, pos.x, pos.y)
+			end
+		end
+	end
+end
+
+function Block:render(cam)
 	local id = self.id
+	local cfg = Block.config[id]
+	
+	if cfg.sizable then self:render_sizable(cam) end
 	
 	local texture = Assets.graphics.block[id]
 	local quad = love.graphics.newQuad(0, self.height * Block.animation[id].frame, self.width, self.height, texture:getDimensions())

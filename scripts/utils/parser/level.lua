@@ -28,8 +28,7 @@ do
 	types['BLOCK'] = function(settings)
 		local v = Block.spawn(settings.ID, settings.X, settings.Y)
 		
-		v.width = settings.W
-		v.height = settings.H
+		v:setSize(settings.W, settings.H)
 	end
 
 	types['NPC'] = function(settings)
