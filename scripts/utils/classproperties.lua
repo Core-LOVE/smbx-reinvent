@@ -1,18 +1,19 @@
+-- Thanks to lukems and kikito
 local Properties = {}
 
 function Properties:__index(k)
-	if self['get_' .. k] then
-		return self['get_' .. k]
-	end
+    local getter = self.class.__instanceDict["get_" .. k]
+    if getter ~= nil then
+        return getter(self)
+    end
 end
 
-function Properties:__newIndex(k, v)
-    local fn = self['set_' .. k]
-	
-    if fn then
-		fn(self, v)
+function Properties:__newindex(k, v)
+    local setter = self["set_" .. k]
+    if setter ~= nil then
+        setter(self, v)
     else
-		rawset(self, k, v)
+        rawset(self, k, v)
     end
 end
 

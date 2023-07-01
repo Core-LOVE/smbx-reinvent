@@ -25,8 +25,18 @@ function Camera:defaultRender()
 	
 	if stage.render then
 		self.renderTo = function()
+			Draw.push()
+			Draw.clear()
+			
+			Draw.translate(-self.x, -self.y)
+			Draw.scale(self.scale_x, self.scale_y)
+			Draw.rotate(self.rotation)
+			Draw.skew(self.skew_x, self.skew_y)
+
 			stage:render(self)
 			Signal.emit('onCameraDraw', self)	
+			
+			Draw.pop()
 		end
 	end
 end
@@ -45,6 +55,15 @@ function Camera:initialize(x, y, width, height, settings)
 	
 	self.render_x = 0
 	self.render_y = 0
+	self.render_scale_x = 1
+	self.render_scale_y = 1
+	self.render_rotation = 0
+	self.render_skew_x = 0
+	self.render_skew_y = 0
+	self.render_origin_x = 0
+	self.render_origin_y = 0
+	self.render_offset_x = 0
+	self.render_offset_y = 0
 end
 
 function Camera:getTarget()
@@ -109,10 +128,10 @@ function Camera:draw()
 	
 	Draw.rawPush()
 	
-		Draw.rawTranslate(self.render_x + self.offset_x, self.render_y + self.offset_y)
-		Draw.rawScale(self.scale_x, self.scale_y)
-		Draw.rawRotate(self.rotation)
-		Draw.rawSkew(self.skew_x, self.skew_y)
+		Draw.rawTranslate(self.render_x + self.render_offset_x, self.render_y + self.render_offset_y)
+		Draw.rawScale(self.render_scale_x, self.render_scale_y)
+		Draw.rawRotate(self.render_rotation)
+		Draw.rawSkew(self.render_skew_x, self.render_skew_y)
 		
 		self:render()
 		self:drawChildren()

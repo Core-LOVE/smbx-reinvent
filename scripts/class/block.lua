@@ -15,6 +15,9 @@ Block.static.config = Config.register("block", {
 	ceilingslope = 0,
 	semisolid = false,
 	
+	pswitch = false,
+	
+	smashable = false,
 	bumpable = false,
 })
 
@@ -81,9 +84,9 @@ HIT_LEFT = -1
 HIT_RIGHT = 1
 
 function Block:hit(side, culprit, hitcount)
-	if true then
-		return self:remove(true)
-	end
+	-- if true then
+		-- return self:remove(true)
+	-- end
 	
 	local side = side or HIT_DOWN
 	
@@ -94,6 +97,9 @@ function Block:hit(side, culprit, hitcount)
 			end
 		end)
 	end)
+	
+	-- local cam = Camera[1]
+	-- cam:tween(7, {render_scale_x = 0.5, render_scale_y = 0.5}, 'out-cubic')
 	
 	table.insert(Block.bumped, self)
 end

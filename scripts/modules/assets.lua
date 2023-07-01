@@ -63,7 +63,9 @@ Assets.sounds = setmetatable({}, {__index = function(_, id)
 end})
 
 Assets.backgrounds = setmetatable({}, {__index = function(_, id)
-	local path = ("background2-" .. id .. ".ini")
+	local path
+	
+	local path = ("background2-" .. id .. ".txt")
 	
 	path = Files.resolve(path) or Files.resolve("config/background2/" .. path)
 	
@@ -74,11 +76,25 @@ Assets.backgrounds = setmetatable({}, {__index = function(_, id)
 		data['background2'] = nil
 		data[""] = nil
 		
-		data._layers = {}
+		data.layers = {}
 		
 		for layerName, layerData in pairs(data) do
-			if layerName == 'background2' then
-				table.insert(data._layers, layerData)
+			if layerName ~= 'background2' and layerName ~= 'layers' and layerName ~= 'main' then
+				layerData.x = layerData.x or 0
+				layerData.y = layerData.y or 0
+				
+				layerData.priority = layerData.priority or LAYERS.LEVEL_BG
+				
+				layerData.parallaxX = layerData.parallaxX or 0
+				layerData.parallaxY = layerData.parallaxY or 0
+				
+				if tonumber(layerData.img) then
+					layerData.img = Assets.graphics.background2[layerData.img]
+				else
+				
+				end
+				
+				table.insert(data.layers, layerData)
 				data[layerName] = nil
 			end
 		end

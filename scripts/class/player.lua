@@ -105,6 +105,9 @@ function Player:initialize(character, x, y)
 		
 		if realOther.type == "Block" then
 			local cfg = Block.config[realOther.id]
+			
+			if cfg.passthrough then return end
+			
 			local hit = true
 			
 			if cfg.semisolid then
