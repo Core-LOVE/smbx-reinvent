@@ -1,6 +1,6 @@
 local BGO, super = Class('BGO', WeakObject)
 
-BGO.static.pool = Pool:new()
+-- BGO.static.pool = Pool:new()
 
 BGO.static.config = Config:new('background', {
 	frames = 1,
@@ -57,7 +57,7 @@ function BGO:initialize(id, x, y)
 	self.id = id
 
 	BGO.animation:register(id)
-	BGO.pool:add(self)
+	table.insert(BGO, self)
 end
 
 function BGO:render(cam)

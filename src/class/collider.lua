@@ -52,8 +52,12 @@ end
 
 function Collider:move()
 	local parent = self.parent
+	local shape = self.shape
+
+	shape[3] = parent.width
+	shape[4] = parent.height
 	
-	return world:move(self.shape, parent.x + parent.speedX, parent.y + parent.speedY, self.filter, self.callback)
+	return world:move(shape, parent.x + parent.speedX, parent.y + parent.speedY, self.filter, self.callback)
 end
 
 function Collider:realShape()

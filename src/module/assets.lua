@@ -42,4 +42,24 @@ Assets.sounds = setmetatable({}, {__index = function(_, id)
 	return rawget(Assets.sounds, id)
 end})
 
+local function findContent(path) return pcallext(require, path) end
+
+Assets.content = setmetatable({}, {__index = function(_, object)
+	rawset(Assets.content, object, setmetatable({}, {__index = function(self, id)
+		local libPath = (object .. '-' .. id)
+		
+		local _ENV = {
+			ID = id,
+		}
+		setmetatable(_ENV, {__index = _G})
+
+		local content = findContent(libPath) or findContent('content/' .. object .. '/' .. libPath)
+		
+		rawset(self, id, content)
+		return rawget(self, id)
+	end}))
+	
+	return rawget(Assets.content, object)
+end})
+
 return Assets

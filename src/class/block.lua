@@ -1,7 +1,5 @@
 local Block, super = Class('Block', WeakObject)
 
-Block.static.pool = Pool:new()
-
 Block.static.config = Config:new('block', {
 	frames = 1,
 	framespeed = 8,
@@ -70,7 +68,7 @@ function Block:initialize(id, x, y, w, h)
 	self.collider = Collider:new(self, 'box', self.x, self.y, self.width, self.height)
 
 	Block.animation:register(id)
-	Block.pool:add(self)
+	table.insert(Block, self)
 end
 
 function Block:update()

@@ -1,0 +1,24 @@
+yo
+print("hey")
+1
+1
+1
+1
+1
+1
+1
+11
+exit
+exit()
+#Tile
+print(#Tile)
+ed
+Player[1].x = Player[1].x + 16
+l
+Block.static.pool[1]
+Block.pool[2]
+Block.pool[3]
+Block.pool[4]
+NPC.pool[1]
+Camera.pool[1]
+Camera.pool

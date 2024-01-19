@@ -3,15 +3,19 @@ local Level, super = Class('Level', Object)
 local LevelParser = require("src.lib.parser.level")
 
 function Level:paint(cam)
-	for k,v in ipairs(BGO.pool) do 
+	for k,v in ipairs(BGO) do 
 		v:draw(cam)
 	end
 
-	for k,v in ipairs(Block.pool) do 
+	for k,v in ipairs(Block) do 
 		v:draw(cam)
 	end
 
-	for k,v in ipairs(Player.pool) do
+	for k,v in ipairs(Player) do
+		v:draw()
+	end
+
+	for k,v in ipairs(NPC) do
 		v:draw()
 	end
 end
@@ -23,7 +27,7 @@ function Level:initialize(path)
 	
 	self.camera = Camera:new(0, 0, 800, 600):setPaint(function()
 		self:paint()
-	end):setTarget(Player.pool[1])
+	end):setTarget(Player[1])
 end
 
 function Level:update()
@@ -32,11 +36,15 @@ function Level:update()
 	Block.animation:update()
 	BGO.animation:update()
 
-	for k,v in ipairs(Player.pool) do
+	for k,v in ipairs(Player) do
 		v:update()
 	end
 
-	for k,v in ipairs(Camera.pool) do
+	for k,v in ipairs(NPC) do
+		v:update()
+	end
+
+	for k,v in ipairs(Camera) do
 		v:update()
 	end
 end

@@ -1,7 +1,5 @@
 local Camera, super = Class('Camera', Object)
 
-Camera.static.pool = Pool:new()
-
 function Camera:initialize(x, y, w, h)
 	super.initialize(self, x, y, w, h)
 	
@@ -13,7 +11,7 @@ function Camera:initialize(x, y, w, h)
 	self.limit_to_section = true
 	
 	self._canvas = love.graphics.newCanvas(w, h)
-	Camera.pool:add(self)
+	table.insert(Camera, self)
 end
 
 function Camera:setPaint(f)

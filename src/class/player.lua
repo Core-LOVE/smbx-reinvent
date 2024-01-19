@@ -1,9 +1,51 @@
 local Player, super = Class('Player', Object)
-Player:include(Physics)
+Player:include(Stateful)
 
+local iniParser = require("src.lib.parser.ini")
+local CollisionUtils = require("src.lib.collisionUtils")
 local Keys = require("src.class.keys")
 
-Player.static.pool = Pool:new()
+Player.static.settings = setmetatable({}, {
+	__index = function(_, character)
+		rawset(Player.settings, character, setmetatable({}, {__index = function(self, powerup)
+			local settings = {}
+			
+			local characterPath = (character .. '-' .. powerup .. '.ini')
+			
+			local path = Files.resolve(characterPath) or Files.resolve('config/character/' .. character .. '/' .. characterPath)
+			local data = iniParser.read(path)
+			
+			for k,v in pairs(data.common) do
+				settings[k] = v
+			end
+			
+			local function define(y)
+				local n = (y == nil and 'X') or 'Y'
+				local offset = 'offset' .. n
+				
+				settings['getSpriteOffset' .. n] = function(settiings, indexX, indexY)
+					local frame = data['frame-' .. indexX .. '-' .. indexY]
+					
+					if not frame then return 0 end
+					
+					return data['frame-' .. indexX .. '-' .. indexY][offset]
+				end
+				
+				settings['setSpriteOffset' .. n] = function(settiings, indexX, indexY, val)
+					data['frame-' .. indexX .. '-' .. indexY][offset] = val
+				end	
+			end
+			
+			define()
+			define(true)
+			
+			rawset(self, powerup, settings)
+			return rawget(self, powerup)
+		end}))
+		
+		return rawget(Player.settings, character)
+	end
+})
 
 function Player:initializeCollider()
 	self.collider = Collider:new(self, 'box', self.x, self.y, self.width, self.height)
@@ -51,7 +93,7 @@ function Player:initializeCollider()
 			if cfg.floorslope ~= 0 or cfg.ceilingslope ~= 0 then
 				hit = false
 				
-				-- CollisionUtils.slopes(self, realOther)
+				CollisionUtils.slopes(self, realOther)
 				return
 			end
 			
@@ -71,8 +113,8 @@ end
 function Player:initialize(character, x, y)
 	super.initialize(self, x, y, 32, 32)
 
-	self.character = character
 	self.powerup = 1
+	self:transform(character)
 
 	self.section = 1
 	self.direction = 1
@@ -97,16 +139,8 @@ function Player:initialize(character, x, y)
 	self:clearCollidesValues()
 	self:initializeCollider()
 
-	Player.pool:add(self)
+	table.insert(Player, self)
 end
-
-function Player:getGravity()
-	return Defines.player_grav or self.gravity
-end
-
--- function Player:getGravity()
--- 	return 0.001
--- end
 
 function Player:clearCollidesValues()
 	self.collidesBlockBottom = false
@@ -116,6 +150,25 @@ function Player:clearCollidesValues()
 	self.collidesSlope = nil
 end
 
+function Player:transform(char_id)
+	self.character = char_id
+
+	local settings = self:getSettings()
+	self.width = settings.width
+	self.height = settings.height
+end
+
+function Player:getGravity()
+	return Defines.player_grav or self.gravity
+end
+
+function Player:getSettings()
+	return Player.settings[self.character][self.powerup]
+end
+-- function Player:getGravity()
+-- 	return 0.001
+-- end
+
 function Player:physics()
 	self.speedY = math.min(self.speedY + self:getGravity(), Defines.gravity)
 	
@@ -123,7 +176,14 @@ function Player:physics()
 	-- self.y = self.y + self.speedY
 
 	self:clearCollidesValues()
-	self:collisions()
+
+	local xto, yto = self.collider:move()
+
+	if not self.collidesSlope then
+		self.y = yto
+	end
+	
+	self.x = xto
 end
 
 function Player:render()
@@ -180,7 +240,7 @@ do
 		end
 	end
 
-	function Player:update_animation()
+	function Player:animation()
 		local v = self
 		local fr = {
 			stand = {[1] = 1, [2] = 5},
@@ -220,11 +280,11 @@ function Player:update_warp()
 		return
 	end
 	
-	-- for k, warp in ipairs(Warp) do
-	-- 	if warp.exit and CollisionUtils.simple(self, warp) then
-	-- 		return warp:onCollide(self)
-	-- 	end	
-	-- end
+	for k, warp in ipairs(Warp) do
+		if warp.exit and CollisionUtils.simple(self, warp) then
+			return warp:onCollide(self)
+		end	
+	end
 end
 
 function Player:limit_position()
@@ -248,8 +308,10 @@ function Player:limit_position()
 end
 
 function Player:update()
+	-- local settings = self:getSettings()
+
 	self.keys:update()
-	self:update_animation()
+	self:animation()
 	
 	if self.keys.left then
 		self.direction = -1
@@ -339,6 +401,80 @@ function Player:update()
 	-- self:updateCollision()
 
 	super.update(self)
+end
+
+do
+	local function pfrX(plrFrame)
+		local A
+		A = plrFrame
+		A = A - 50
+		
+		while(A > 100) do
+			A = A - 100
+		end
+		
+		if(A > 90) then
+			A = 9
+		elseif(A > 90) then
+			A = 9
+		elseif(A > 80) then
+			A = 8
+		elseif(A > 70) then
+			A = 7
+		elseif(A > 60) then
+			A = 6
+		elseif(A > 50) then
+			A = 5
+		elseif(A > 40) then
+			A = 4
+		elseif(A > 30) then
+			A = 3
+		elseif(A > 20) then
+			A = 2
+		elseif(A > 10) then
+			A = 1
+		else
+			A = 0
+		end
+		
+		return A * 100
+	end
+
+	local function pfrY(plrFrame)
+		local A
+		A = plrFrame
+		A = A - 50
+		
+		while(A > 100) do
+			A = A - 100
+		end
+		
+		A = A - 1
+		while(A > 9) do
+			A = A - 10
+		end
+		
+		return A * 100
+	end
+	
+	function Player:getZ()
+		return LAYERS.PLAYER
+	end
+	
+	function Player:render()
+		local texture = Assets.graphics[self.character][self.powerup]
+		local settings = self:getSettings()
+	
+		local tx, ty = pfrX(100 + self.frame * self.direction), pfrY(100 + self.frame * self.direction)
+		local quad = Graphics.newQuad(tx, ty, 100, 100, texture:getDimensions())
+		
+		local ntx, nty = tx / 100, ty / 100
+		
+		local ox = settings:getSpriteOffsetX(ntx, nty)
+		local oy = settings:getSpriteOffsetY(ntx, nty)
+		
+		Graphics.draw(texture, quad, -ox, -oy)
+	end
 end
 
 return Player

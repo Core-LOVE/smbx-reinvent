@@ -67,9 +67,7 @@ do
 	end
 	
 	types['BLOCK'] = function(settings)
-		local v = Block:new(settings.ID, settings.X, settings.Y)
-		
-		-- v:setSize(settings.W, settings.H)
+		local v = Block:new(settings.ID, settings.X, settings.Y, settings.W, settings.H)
 	end
 
 	types['NPC'] = function(settings)
@@ -79,18 +77,18 @@ do
 	end
 	
 	types['DOORS'] = function(settings)
-		-- local id = settings.DT
+		local id = settings.DT
 		
-		-- local ext = Warp.spawn(id, settings.OX, settings.OY)
-		-- ext.direction = settings.OD
+		local ext = Warp:new(id, settings.OX, settings.OY)
+		ext.direction = settings.OD
 		
-		-- local ent = Warp.spawn(id, settings.IX, settings.IY)
-		-- ent.exit = ext
-		-- ent.direction = settings.ID
+		local ent = Warp:new(id, settings.IX, settings.IY)
+		ent.exit = ext
+		ent.direction = settings.ID
 		
-		-- if settings.TW then
-			-- ext.exit = ent
-		-- end
+		if settings.TW then
+			ext.exit = ent
+		end
 	end
 	
 	types['BGO'] = function(settings)

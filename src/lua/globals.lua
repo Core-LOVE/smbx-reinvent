@@ -9,3 +9,11 @@ _G.type = function(t)
 
 	return _type
 end
+
+function pcallext(f, arg)
+	local res
+	
+	if pcall(function() res = f(arg) end) then
+		return res
+	end
+end
