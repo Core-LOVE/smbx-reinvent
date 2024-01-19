@@ -15,8 +15,10 @@ NPC.static.config = Config('npc', {
 	framespeed = 8,
 	framestyle = 0,
 	
-	playerblocktop = true,
+	playerblocktop = false,
+	playerblock = false,
 	npcblocktop = false,
+	npcblock = false,
 
 	isvine = false,
 })
@@ -84,7 +86,19 @@ function NPC:initializeCollider()
 			end
 
 			return 'slide'
-		end	
+		elseif type(realOther) == "NPC" then
+			local cfg = NPC.config[realOther.id]
+
+			if cfg.npcblocktop then
+				local didCollide, t, nx, ny, cornerCollide = self.collider:sweep(other.collider:realShape(), self.x + self.speedX, self.y + self.speedY)
+				
+				if didCollide and ny < 0 and (self.y + self.height) - 1 < realOther.y and self.speedY > 0 then
+					return 'slide'
+				end
+			end
+
+			return
+		end
 	end
 end
 
@@ -107,6 +121,8 @@ function NPC:initialize(id, x, y)
 	self.forcedTimer = 0
 	self.frameTimer = 0
 	self.despawnTimer = 180
+
+	self.nogravity = false
 
 	self:initializeCollider()
 	self:clearCollidesValues()
@@ -137,7 +153,7 @@ function NPC:transform(id)
 end
 
 function NPC:getGravity()
-	if NPC.config[self.id].nogravity then
+	if self.nogravity or NPC.config[self.id].nogravity then
 		return 0
 	end
 

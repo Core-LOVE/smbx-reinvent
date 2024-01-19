@@ -11,6 +11,7 @@ print("Loaded Lua Modifications...")
 
 --[[modules]]
 Graphics = require("src.module.graphics")
+NetPlay = require("src.module.netplay")
 Defines = require("src.module.defines")
 Assets = require("src.module.assets")
 Audio = require("src.module.audio")

@@ -106,7 +106,19 @@ function Player:initializeCollider()
 			end
 
 			return 'slide'
-		end	
+		elseif type(realOther) == "NPC" then
+			local cfg = NPC.config[realOther.id]
+
+			if cfg.playerblocktop then
+				local didCollide, t, nx, ny, cornerCollide = self.collider:sweep(other.collider:realShape(), self.x + self.speedX, self.y + self.speedY)
+				
+				if didCollide and ny < 0 and (self.y + self.height) - 1 < realOther.y and self.speedY > 0 then
+					return 'slide'
+				end
+			end
+			
+			return
+		end
 	end
 end
 

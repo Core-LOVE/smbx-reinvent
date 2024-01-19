@@ -1,77 +1,80 @@
 local Defines = {}
 
-Defines.gravity = 12
-Defines.earthquake = 0
-Defines.jumpheight = 20
-Defines.spinjumpheight = 14
-Defines.jumpheight_bounce = 20
-Defines.block_jumpheight = 25
-Defines.head_jumpheight = 22
-Defines.npc_jumpheight = 22
-Defines.spring_jumpheight = 55
-Defines.player_jumpspeed = -5.7
-Defines.player_runspeed = 6
-Defines.player_walkspeed = 3
-Defines.player_walkingAcceleration = 0.1
-Defines.player_runningAcceleration = 0.05
-Defines.player_turningAcceleration = 0.18
-Defines.player_deceleration = 0.07
-Defines.player_runToWalkDeceleration = 0.1
-Defines.player_grav = 0.4
+local defaults = {}
 
-Defines.npc_timeoffscreen = 180
-Defines.shell_speed = 7.1
-Defines.shell_speedY = 11
-Defines.npc_canhurtwait = 30
-Defines.npc_walkingspeed = 1.2
-Defines.npc_walkingonspeed = 1
-Defines.npc_mushroomspeed = 1.8
-Defines.npc_pswitch = 777
-Defines.npc_grav = 0.26
+defaults.gravity = 12
+defaults.earthquake = 0
+defaults.jumpheight = 20
+defaults.spinjumpheight = 14
+defaults.jumpheight_bounce = 20
+defaults.block_jumpheight = 25
+defaults.head_jumpheight = 22
+defaults.npc_jumpheight = 22
+defaults.spring_jumpheight = 55
+defaults.player_jumpspeed = -5.7
+defaults.player_runspeed = 6
+defaults.player_walkspeed = 3
+defaults.player_walkingAcceleration = 0.1
+defaults.player_runningAcceleration = 0.05
+defaults.player_turningAcceleration = 0.18
+defaults.player_deceleration = 0.07
+defaults.player_runToWalkDeceleration = 0.1
+defaults.player_grav = 0.4
 
-Defines.player_grabSideEnabled = true
-Defines.player_grabTopEnabled = true
-Defines.player_grabShellEnabled = true
-Defines.player_link_shieldEnabled = true
-Defines.player_link_fairyVineEnabled = true
+defaults.npc_timeoffscreen = 180
+defaults.shell_speed = 7.1
+defaults.shell_speedY = 11
+defaults.npc_canhurtwait = 30
+defaults.npc_walkingspeed = 1.2
+defaults.npc_walkingonspeed = 1
+defaults.npc_mushroomspeed = 1.8
+defaults.npc_pswitch = 777
+defaults.npc_grav = 0.26
 
-Defines.block_hit_link_rupeeID1 = 251
-Defines.block_hit_link_rupeeID2 = 252
-Defines.block_hit_link_rupeeID3 = 253
+defaults.player_grabSideEnabled = true
+defaults.player_grabTopEnabled = true
+defaults.player_grabShellEnabled = true
+defaults.player_link_shieldEnabled = true
+defaults.player_link_fairyVineEnabled = true
 
-Defines.kill_drop_link_rupeeID1 = 251
-Defines.kill_drop_link_rupeeID2 = 252
-Defines.kill_drop_link_rupeeID3 = 253
+defaults.block_hit_link_rupeeID1 = 251
+defaults.block_hit_link_rupeeID2 = 252
+defaults.block_hit_link_rupeeID3 = 253
 
-Defines.pswitch_music = true
+defaults.kill_drop_link_rupeeID1 = 251
+defaults.kill_drop_link_rupeeID2 = 252
+defaults.kill_drop_link_rupeeID3 = 253
 
-Defines.effect_Zoomer_killEffectEnabled = true
+defaults.pswitch_music = true
 
-Defines.smb3RouletteScoreValueStar = 10
-Defines.smb3RouletteScoreValueMushroom = 6
-Defines.smb3RouletteScoreValueFlower = 8
+defaults.effect_Zoomer_killEffectEnabled = true
 
-Defines.effect_NpcToCoin = 11
-Defines.sound_NpcToCoin = 14
-Defines.npcToCoinValue = 1
-Defines.npcToCoinValueReset = 100
-Defines.coinValue = 1
-Defines.coin5Value = 5
-Defines.coin20Value = 20
+defaults.smb3RouletteScoreValueStar = 10
+defaults.smb3RouletteScoreValueMushroom = 6
+defaults.smb3RouletteScoreValueFlower = 8
 
-Defines.levelFreeze = false
+defaults.effect_NpcToCoin = 11
+defaults.sound_NpcToCoin = 14
+defaults.npcToCoinValue = 1
+defaults.npcToCoinValueReset = 100
+defaults.coinValue = 1
+defaults.coin5Value = 5
+defaults.coin20Value = 20
 
-Defines.cheat_shadowmario = false
-Defines.cheat_ahippinandahoppin = false
-Defines.cheat_sonictooslow = false
-Defines.cheat_illparkwhereiwant = false
-Defines.cheat_wingman = false
-Defines.cheat_captainn = false
-Defines.cheat_flamerthrower = false
-Defines.cheat_moneytree = false
-Defines.cheat_speeddemon = false
-Defines.cheat_donthurtme = false
-Defines.cheat_stickyfingers = false
-Defines.player_hasCheated = false
+defaults.levelFreeze = false
 
+defaults.cheat_shadowmario = false
+defaults.cheat_ahippinandahoppin = false
+defaults.cheat_sonictooslow = false
+defaults.cheat_illparkwhereiwant = false
+defaults.cheat_wingman = false
+defaults.cheat_captainn = false
+defaults.cheat_flamerthrower = false
+defaults.cheat_moneytree = false
+defaults.cheat_speeddemon = false
+defaults.cheat_donthurtme = false
+defaults.cheat_stickyfingers = false
+defaults.player_hasCheated = false
+
+setmetatable(Defines, {__index = defaults})
 return Defines
